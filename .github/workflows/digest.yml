@@ -1,0 +1,26 @@
+name: Daily Digest
+
+on:
+  schedule:
+    # 10 AM, 6 PM, 11 PM UTC
+    - cron: "0 10,18,23 * * *"
+  workflow_dispatch: # allow manual runs
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run digest
+        env:
+          DAILYHIGH_API_KEY: ${{ secrets.DAILYHIGH_API_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python part3_digest/digest.py
